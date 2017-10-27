@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 '''
 _author_=Captain
+声明：该脚本仅供安全检测或网络攻防研究,非法用途后果自负
 '''
 import requests
 import os
@@ -11,7 +12,7 @@ reload(sys)   # Python2.5 初始化后会删除 sys.setdefaultencoding 这个方
 sys.setdefaultencoding('utf-8')     #将默认的ASCII码改为UTF-8编码
 
 with open(os.getcwd()+"\ip.txt",'r') as file:
-    IP_adress=file.readlines()     #读取ip.txt文档中要扫描的IP
+    IP_adress=file.readlines()     #读取该脚本所在目录的ip.txt文档中要扫描的IP
 payloads={
     '1':{'username':'admin','password':'admin','times':'0'},
     '2':{'username':'admin','password':'sundray','times':'0'},
@@ -40,3 +41,4 @@ def cracking(url):
 if __name__ == '__main__':
     pool=Pool()
     pool.map(cracking,IP_adress)
+
